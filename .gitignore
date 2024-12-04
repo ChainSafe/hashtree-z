@@ -1,1 +1,3 @@
 hashtree/
+zig-out/
+.zig-cache/
