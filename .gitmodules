@@ -1,0 +1,3 @@
+[submodule "hashtree"]
+	path = hashtree
+	url = https://github.com/prysmaticlabs/hashtree.git
