@@ -1,6 +1,12 @@
 # hashtree-z
 Zig binding for hashtree
 
+# How to build (it's a TODO to call make inside Zig's build script):
+- `cd hashtree`
+- `make`
+- `zig build`
+- locate `zig-out/lib/libhashtree-z.dylib` (could be diffrerent name in other OSs) and continue the test below
+
 # How to consume at javascript side using Bun FFI:
 
 ```typescript
