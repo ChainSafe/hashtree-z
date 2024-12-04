@@ -25,9 +25,10 @@ pub fn build(b: *std.Build) void {
 
     // Add include paths if needed
     exe.addIncludePath(b.path("hashtree/src"));
-
-    // exe.setBuildMode(std.builtin.Mode.Debug); // Set build mode
-    // exe.install();
+    // TODO: build hashtree using make
+    // for now, do it manually
+    // Add the static library
+    exe.addObjectFile(b.path("hashtree/build/lib/libhashtree.a"));
 
     b.installArtifact(exe);
 
