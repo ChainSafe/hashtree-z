@@ -12,7 +12,7 @@ pub fn build(b: *std.Build) void {
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
-    const exe = b.addStaticLibrary(.{
+    const lib = b.addSharedLibrary(.{
         .name = "hashtree-z",
         .root_source_file = b.path("src/root.zig"),
         .target = target,
@@ -21,23 +21,23 @@ pub fn build(b: *std.Build) void {
 
     // Add the C source file
     // exe.addCSourceFile("hashtree/src/hashtree.c", &.{}); // Path to your C source
-    exe.addCSourceFile(.{ .file = b.path("hashtree/src/hashtree.c"), .flags = &.{"-std=c99"} });
+    lib.addCSourceFile(.{ .file = b.path("hashtree/src/hashtree.c"), .flags = &.{"-std=c99"} });
 
     // Add include paths if needed
-    exe.addIncludePath(b.path("hashtree/src"));
+    lib.addIncludePath(b.path("hashtree/src"));
     // TODO: build hashtree using make
     // for now, do it manually
     // Add the static library
-    exe.addObjectFile(b.path("hashtree/build/lib/libhashtree.a"));
+    lib.addObjectFile(b.path("hashtree/build/lib/libhashtree.a"));
 
-    b.installArtifact(exe);
+    b.installArtifact(lib);
 
     const lib_unit_tests = b.addTest(.{
         .root_source_file = b.path("src/root.zig"),
         .target = target,
         .optimize = optimize,
     });
-    lib_unit_tests.linkLibrary(exe);
+    lib_unit_tests.linkLibrary(lib);
     lib_unit_tests.addIncludePath(b.path("hashtree/src"));
     const run_lib_unit_tests = b.addRunArtifact(lib_unit_tests);
 
