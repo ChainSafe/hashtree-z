@@ -10,34 +10,29 @@ Zig binding for hashtree
 # How to consume at javascript side using Bun FFI:
 
 ```typescript
-import { dlopen, FFIType, ptr } from "bun:ffi";
-const { pointer, usize, void: voidFFI } = FFIType;
+import {dlopen} from "bun:ffi";
 
-const path = `./libhashtree-z.dylib`;
+// Link to shared library path
+const path = `.${your_path}/libhashtree-z.dylib`;
 
 // Load the compiled Zig shared library
 const lib = dlopen(path, {
   init: {
       args: [],
-      returns: voidFFI
+      returns: "void"
   },
   hash: {
-      args: [pointer, pointer, usize],
-      returns: voidFFI
+      args: ["ptr", "ptr", "u64"],
+      returns: "void"
   },
 });
 
 const chunk = new Uint8Array(64).fill(0xAB);
 const out = new Uint8Array(32);
 
-
-const chunkPtr = ptr(chunk);
-const outPtr = ptr(out);
-
 lib.symbols.init();
 
-lib.symbols.hash(outPtr, chunkPtr, 1);
-
+lib.symbols.hash(out, chunk, 1);
 console.log("out", out);
 
 // Close the library when done
