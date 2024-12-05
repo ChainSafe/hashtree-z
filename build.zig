@@ -19,16 +19,18 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    const makeStep = b.addSystemCommand(([_][]const u8{"make"})[0..]);
+    makeStep.cwd = b.path("hashtree");
+    lib.step.dependOn(&makeStep.step);
+
+    // Add the static library, this point to the output file
+    lib.addObjectFile(b.path("hashtree/build/lib/libhashtree.a"));
+
     // Add the C source file
-    // exe.addCSourceFile("hashtree/src/hashtree.c", &.{}); // Path to your C source
     lib.addCSourceFile(.{ .file = b.path("hashtree/src/hashtree.c"), .flags = &.{"-std=c99"} });
 
     // Add include paths if needed
     lib.addIncludePath(b.path("hashtree/src"));
-    // TODO: build hashtree using make
-    // for now, do it manually
-    // Add the static library
-    lib.addObjectFile(b.path("hashtree/build/lib/libhashtree.a"));
 
     b.installArtifact(lib);
 
