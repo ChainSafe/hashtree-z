@@ -2,6 +2,7 @@
 Zig binding for hashtree
 
 # How to build
+- clone hashtree to root: `git clone --recurse-submodules https://github.com/prysmaticlabs/hashtree.git`
 - `zig build`
 - locate `zig-out/lib/libhashtree-z.dylib` (could be diffrerent name in other OSs) and continue the test below
 
