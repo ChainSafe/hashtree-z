@@ -5,26 +5,12 @@ const c = @cImport({
     @cInclude("hashtree.h");
 });
 
-pub export fn init() void {
-    // TODO: handle result
-    _ = c.hashtree_init(null);
-}
-
 pub export fn hash(out: *u8, chunks: *const u8, count: usize) void {
     // Cast the slices to raw pointers and call the external function
     c.hashtree_hash(out, chunks, count);
 }
 
-export fn add(a: i32, b: i32) i32 {
-    return a + b;
-}
-
-test "basic add functionality" {
-    try testing.expect(add(3, 7) == 10);
-}
-
 test "test_hash" {
-    init();
     const chunks: [64]u8 = [_]u8{0xAB} ** 64;
     var out: [32]u8 = [_]u8{0} ** 32;
     hash(&out[0], &chunks[0], 1);

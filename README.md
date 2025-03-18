@@ -16,10 +16,6 @@ const path = `.${your_path}/libhashtree-z.dylib`;
 
 // Load the compiled Zig shared library
 const lib = dlopen(path, {
-  init: {
-      args: [],
-      returns: "void"
-  },
   hash: {
       args: ["ptr", "ptr", "u64"],
       returns: "void"
@@ -28,8 +24,6 @@ const lib = dlopen(path, {
 
 const chunk = new Uint8Array(64).fill(0xAB);
 const out = new Uint8Array(32);
-
-lib.symbols.init();
 
 lib.symbols.hash(out, chunk, 1);
 console.log("out", out);
