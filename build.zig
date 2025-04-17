@@ -10,11 +10,6 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    const lib = b.addLibrary(.{
-        .name = "hashtree",
-        .root_module = module,
-        .linkage = .static,
-    });
 
     // Add the assembly and C source files
     module.addCSourceFiles(.{
@@ -50,8 +45,6 @@ pub fn build(b: *std.Build) void {
         },
     });
     module.addIncludePath(b.path("hashtree/src"));
-
-    b.installArtifact(lib);
 
     const mod_unit_tests = b.addTest(.{
         .root_module = module,
