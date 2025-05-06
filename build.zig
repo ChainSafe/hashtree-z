@@ -50,11 +50,30 @@ pub fn build(b: *std.Build) void {
     });
     module.addIncludePath(b.path("hashtree/src"));
 
+    const lib = b.addSharedLibrary(.{
+        .name = "hashtree",
+        .root_source_file = b.path("src/root_c_abi.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+
+    lib.root_module.addImport("hashtree", module);
+    lib.addIncludePath(b.path("hashtree/src"));
+    b.installArtifact(lib);
+
     const mod_unit_tests = b.addTest(.{
         .root_module = module,
     });
+    const shared_lib_unit_tests = b.addTest(.{
+        .root_source_file = b.path("src/root_c_abi.zig"),
+    });
+    shared_lib_unit_tests.addIncludePath(b.path("hashtree/src"));
+    shared_lib_unit_tests.root_module.addImport("hashtree", module);
+
     const run_mod_unit_tests = b.addRunArtifact(mod_unit_tests);
+    const run_shared_lib_unit_tests = b.addRunArtifact(shared_lib_unit_tests);
 
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_mod_unit_tests.step);
+    test_step.dependOn(&run_shared_lib_unit_tests.step);
 }
