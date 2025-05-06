@@ -1,3 +1,7 @@
 hashtree/
 zig-out/
 .zig-cache/
+
+test/bun/node_modules/
+
+test/bun/benchmark_data/
