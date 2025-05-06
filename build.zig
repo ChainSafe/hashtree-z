@@ -29,9 +29,12 @@ pub fn build(b: *std.Build) void {
                 "sha256_avx_x1.S",
                 "sha256_sse_x1.S",
             },
-        .flags = &[_][]const u8{
+        .flags = if (target.result.os.tag == .macos) &[_][]const u8{
             "-g",
             "-fpic",
+        } else &[_][]const u8{
+            "-g",
+            "-fPIC",
             "-fno-integrated-as",
         },
     });
