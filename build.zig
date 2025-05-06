@@ -29,9 +29,10 @@ pub fn build(b: *std.Build) void {
                 "sha256_avx_x1.S",
                 "sha256_sse_x1.S",
             },
-        .flags = if (target.result.os.tag == .macos) &[_][]const u8{
+        .flags = if (target.result.os.tag == .macos and target.result.cpu.arch.isAARCH64()) &[_][]const u8{
             "-g",
             "-fpic",
+            // have -fno-integrated-as here will cause build error on Apple Silicon
         } else &[_][]const u8{
             "-g",
             "-fPIC",
