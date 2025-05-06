@@ -45,7 +45,7 @@ jobs:
         run: |
           zig build test
 
-       - name: Build binary
+      - name: Build binary
         run: zig build -Doptimize=ReleaseSafe
 
       - name: Check binary
