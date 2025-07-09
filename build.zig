@@ -11,6 +11,14 @@ pub fn build(b: *std.Build) void {
         .link_libc = true,
     });
 
+    const assembly_flags_default = &.{ "-g", "-fpic" };
+    var assembly_flags = std.ArrayList([]const u8).init(b.allocator);
+    assembly_flags.appendSlice(assembly_flags_default) catch unreachable;
+
+    if (!target.result.cpu.arch.isAARCH64()) {
+        assembly_flags.append("-fno-integrated-as") catch unreachable;
+    }
+
     // Add the assembly and C source files
     module.addCSourceFiles(.{
         .root = b.path("hashtree/src"),
@@ -29,11 +37,7 @@ pub fn build(b: *std.Build) void {
                 "sha256_avx_x1.S",
                 "sha256_sse_x1.S",
             },
-        .flags = &[_][]const u8{
-            "-g",
-            "-fpic",
-            "-fno-integrated-as",
-        },
+        .flags = assembly_flags.items,
     });
 
     module.addCSourceFile(.{
