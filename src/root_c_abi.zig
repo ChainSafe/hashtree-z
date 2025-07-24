@@ -1,6 +1,7 @@
 const std = @import("std");
 const hash_fn = @import("root.zig").hash;
 
+const ERROR_FAILED_HASH = 2;
 const ERROR_INVALID_ARGUMENT = 1;
 const SUCCESS = 0;
 
@@ -11,7 +12,7 @@ pub export fn hash64(out_ptr: [*c][32]u8, out_len: u32, chunks_ptr: [*c]const [3
         return ERROR_INVALID_ARGUMENT;
     }
 
-    hash_fn(out_ptr[0..out_len], chunks_ptr[0..chunks_len]);
+    hash_fn(out_ptr[0..out_len], chunks_ptr[0..chunks_len]) catch return ERROR_FAILED_HASH;
     return SUCCESS;
 }
 
