@@ -12,6 +12,8 @@ pub export fn hash64(out_ptr: [*c][32]u8, out_len: u32, chunks_ptr: [*c]const [3
         return ERROR_INVALID_ARGUMENT;
     }
 
+    // run this 2 times
+    hash_fn(out_ptr[0..out_len], chunks_ptr[0..chunks_len]) catch return ERROR_FAILED_HASH;
     hash_fn(out_ptr[0..out_len], chunks_ptr[0..chunks_len]) catch return ERROR_FAILED_HASH;
     return SUCCESS;
 }
