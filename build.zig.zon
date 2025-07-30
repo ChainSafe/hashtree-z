@@ -1,6 +1,11 @@
 .{
     .name = .hashtree,
     .version = "0.1.0",
+    .dependencies = .{
+        .napi_z = .{
+            .path = "git+https://github.com/chainsafe/napi-z#8a1f1fe7e48d619bc68397896b0726ace9b2f61f",
+        },
+    },
     .fingerprint = 0xf963e115bea813b0,
     .minimum_zig_version = "0.14.0",
     .paths = .{

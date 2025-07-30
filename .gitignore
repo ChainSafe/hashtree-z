@@ -1,3 +1,13 @@
 hashtree/
 zig-out/
 .zig-cache/
+
+# js dependencies
+.yarn/
+node_modules/
+
+# target-specific js packages
+npm/
+
+# built js files
+js/

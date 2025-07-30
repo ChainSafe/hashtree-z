@@ -1,0 +1,26 @@
+{
+  "name": "@chainsafe/hashtree",
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "tsc --outDir js",
+    "test": "vitest run ts-test/index.test.ts"
+  },
+  "napi": {
+    "binaryName": "hashtree",
+    "targets": [
+      "x86_64-unknown-linux-gnu",
+      "aarch64-unknown-linux-gnu",
+      "aarch64-apple-darwin"
+    ]
+  },
+  "packageManager": "yarn@4.9.2",
+  "dependencies": {
+    "@chainsafe/napi-z": "^0.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
