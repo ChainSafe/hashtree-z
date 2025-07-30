@@ -3,7 +3,8 @@
     .version = "0.1.0",
     .dependencies = .{
         .napi_z = .{
-            .path = "git+https://github.com/chainsafe/napi-z#8a1f1fe7e48d619bc68397896b0726ace9b2f61f",
+            .url = "git+https://github.com/chainsafe/napi-z#8a1f1fe7e48d619bc68397896b0726ace9b2f61f",
+            .hash = "napi_z-0.1.0-iqJb78_YAQAMXV5hm0JcA7oL5JhtgyWZId48w1frfDaV",
         },
     },
     .fingerprint = 0xf963e115bea813b0,
