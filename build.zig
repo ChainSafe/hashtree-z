@@ -57,4 +57,24 @@ pub fn build(b: *std.Build) void {
 
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_mod_unit_tests.step);
+
+    // Build the NAPI library (zig build napi)
+    const napi_lib = b.addLibrary(.{
+        .name = "hashtree",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/napi.zig"),
+            .target = target,
+            .optimize = optimize,
+            .imports = &[_]std.Build.Module.Import{
+                .{ .name = "hashtree", .module = module },
+                .{ .name = "napi", .module = b.dependency("napi_z", .{}).module("napi") },
+            },
+        }),
+        .linkage = .dynamic,
+    });
+    const install_napi_lib = b.addInstallArtifact(napi_lib, .{
+        .dest_sub_path = "hashtree.node",
+    });
+    const install_napi_lib_step = b.step("napi", "Build NAPI library");
+    install_napi_lib_step.dependOn(&install_napi_lib.step);
 }

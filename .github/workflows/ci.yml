@@ -44,3 +44,95 @@ jobs:
       - name: Build and Test
         run: |
           zig build test
+
+  napi-build-and-test:
+    needs: zig-build-test
+    strategy:
+      matrix:
+        settings:
+          # the target names are important here, napi-z requires the target name to match the ones in the package.json
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+          - os: macos-latest
+            target: aarch64-apple-darwin
+
+    runs-on: ${{ matrix.settings.os }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive # Ensures submodules are cloned
+          fetch-depth: 0        # Fetches the entire history for all branches
+      
+      - name: Install Zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: "0.14.1" # Set the required Zig version
+
+      - name: Build napi binding
+        run: zig build napi
+      
+      - run: corepack enable
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+        
+      - name: Install dependencies
+        run: yarn
+      
+      - name: Run node tests
+        run: yarn test
+      
+      - name: Upload napi binding
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.settings.target }}
+          path: zig-out/lib/hashtree.node
+
+  napi-publish:
+    needs: napi-build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive # Ensures submodules are cloned
+          fetch-depth: 0        # Fetches the entire history for all branches
+      - name: Download napi bindings for all targets
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - run: corepack enable
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+        
+      - name: Install dependencies
+        run: yarn
+      
+      - name: Build package
+        run: yarn build
+      
+      - name: Publish package
+        run: |
+          npm config set provenance true
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          yarn napi-z create-npm-dirs
+          yarn napi-z prepublish
+          yarn napi-z publish --access public
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
