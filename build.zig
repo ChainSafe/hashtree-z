@@ -4,11 +4,16 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const module = b.addModule("hashtree", .{
-        .root_source_file = b.path("src/root.zig"),
-        .target = target,
-        .optimize = optimize,
-        .link_libc = true,
+    const upstream = b.dependency("hashtree", .{});
+
+    const lib = b.addLibrary(.{
+        .name = "hashtree",
+        .linkage = .static,
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = optimize,
+            .link_libc = true,
+        }),
     });
 
     const assembly_flags_default = &.{ "-g", "-fpic" };
@@ -20,8 +25,8 @@ pub fn build(b: *std.Build) void {
     }
 
     // Add the assembly and C source files
-    module.addCSourceFiles(.{
-        .root = b.path("hashtree/src"),
+    lib.addCSourceFiles(.{
+        .root = upstream.path("src"),
         .files = if (target.result.cpu.arch.isArm() or target.result.cpu.arch.isAARCH64())
             &[_][]const u8{
                 "sha256_armv8_neon_x4.S",
@@ -40,15 +45,29 @@ pub fn build(b: *std.Build) void {
         .flags = assembly_flags.items,
     });
 
-    module.addCSourceFile(.{
-        .file = b.path("hashtree/src/hashtree.c"),
+    lib.addCSourceFiles(.{
+        .root = upstream.path("src"),
+        .files = &[_][]const u8{
+            "hashtree.c",
+            "sha256_generic.c",
+        },
         .flags = &.{
             "-g",
             "-Wall",
             "-Werror",
         },
     });
-    module.addIncludePath(b.path("hashtree/src"));
+    lib.addIncludePath(upstream.path("src"));
+
+    lib.installHeader(upstream.path("src/hashtree.h"), "hashtree.h");
+    b.installArtifact(lib);
+
+    const module = b.addModule("hashtree", .{
+        .root_source_file = b.path("src/root.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    module.linkLibrary(lib);
 
     const mod_unit_tests = b.addTest(.{
         .root_module = module,
