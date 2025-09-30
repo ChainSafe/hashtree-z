@@ -24,18 +24,18 @@ pub fn build(b: *std.Build) void {
         .root = b.path("hashtree/src"),
         .files = if (target.result.cpu.arch.isArm() or target.result.cpu.arch.isAARCH64())
             &[_][]const u8{
-                "sha256_armv8_neon_x4.S",
-                "sha256_armv8_neon_x1.S",
-                "sha256_armv8_crypto.S",
+                // "sha256_armv8_neon_x4.S",
+                // "sha256_armv8_neon_x1.S",
+                // "sha256_armv8_crypto.S",
             }
         else
             &[_][]const u8{
-                "sha256_shani.S",
-                "sha256_avx_x16.S",
+                // "sha256_shani.S",
+                // "sha256_avx_x16.S",
                 "sha256_avx_x8.S",
-                "sha256_avx_x4.S",
-                "sha256_avx_x1.S",
-                "sha256_sse_x1.S",
+                // "sha256_avx_x4.S",
+                // "sha256_avx_x1.S",
+                // "sha256_sse_x1.S",
             },
         .flags = assembly_flags.items,
     });
