@@ -6,8 +6,8 @@ Zig binding for [hashtree](https://github.com/prysmaticlabs/hashtree)
 - In build.zig:
 ```zig
 const hashtree = b.dependency("hashtree", .{});
-const hashtree_mod = b.module("hashtree");
-const hashtree_lib = b.artifact("hashtree");
+const hashtree_mod = hashtree.module("hashtree");
+const hashtree_lib = hashtree.artifact("hashtree");
 ```
 - Module usage:
 ```zig
