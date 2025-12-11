@@ -25,6 +25,9 @@ pub fn build(b: *std.Build) void {
     }
 
     // Add the assembly and C source files
+    // Only arm64 and x86 architectures have optimized assembly implementations.
+    // All other architectures will use the generic fallback C implementation.
+
     lib.addCSourceFiles(.{
         .root = upstream.path("src"),
         .files = if (target.result.cpu.arch.isArm() or target.result.cpu.arch.isAARCH64())
@@ -33,7 +36,7 @@ pub fn build(b: *std.Build) void {
                 "sha256_armv8_neon_x1.S",
                 "sha256_armv8_crypto.S",
             }
-        else
+        else if (target.result.cpu.arch.isX86())
             &[_][]const u8{
                 "sha256_shani.S",
                 "sha256_avx_x16.S",
@@ -41,7 +44,9 @@ pub fn build(b: *std.Build) void {
                 "sha256_avx_x4.S",
                 "sha256_avx_x1.S",
                 "sha256_sse_x1.S",
-            },
+            }
+        else
+            &[_][]const u8{},
         .flags = assembly_flags.items,
     });
 
