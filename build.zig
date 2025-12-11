@@ -5,6 +5,7 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const upstream = b.dependency("hashtree", .{});
+
     const lib = b.addLibrary(.{
         .name = "hashtree",
         .linkage = .static,
