@@ -3,8 +3,8 @@
     .version = "0.1.0",
     .dependencies = .{
         .hashtree = .{
-            .url = "git+https://github.com/offchainlabs/hashtree#f733b7698511b5498b722421a30ddf7e5066497c",
-            .hash = "N-V-__8AANPhDADGDLYAKqml8U-1jREHVH_-5vi9Mcwsf6oi",
+            .url = "git+https://github.com/lodekeeper-z/hashtree#c7588605b811de790a45d5dfafafc0e712854528",
+            .hash = "N-V-__8AAD7KDwAJhkERKP7udCdwtbZyt7nOUr8-MibaEgCN",
         },
     },
     .fingerprint = 0xf963e115bea813b0,

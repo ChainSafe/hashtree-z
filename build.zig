@@ -17,7 +17,7 @@ pub fn build(b: *std.Build) void {
     });
 
     const assembly_flags_default: []const []const u8 = &.{ "-g", "-fpic" };
-    var assembly_flags = std.ArrayList([]const u8).empty;
+    var assembly_flags = std.ArrayListUnmanaged([]const u8).empty;
     assembly_flags.appendSlice(b.allocator, assembly_flags_default) catch unreachable;
 
     if (!target.result.cpu.arch.isAARCH64()) {
