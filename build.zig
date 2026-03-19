@@ -16,19 +16,19 @@ pub fn build(b: *std.Build) void {
         }),
     });
 
-    const assembly_flags_default = &.{ "-g", "-fpic" };
-    var assembly_flags = std.ArrayList([]const u8).init(b.allocator);
-    assembly_flags.appendSlice(assembly_flags_default) catch unreachable;
+    const assembly_flags_default: []const []const u8 = &.{ "-g", "-fpic" };
+    var assembly_flags = std.ArrayList([]const u8).empty;
+    assembly_flags.appendSlice(b.allocator, assembly_flags_default) catch unreachable;
 
     if (!target.result.cpu.arch.isAARCH64()) {
-        assembly_flags.append("-fno-integrated-as") catch unreachable;
+        assembly_flags.append(b.allocator, "-fno-integrated-as") catch unreachable;
     }
 
     // Add the assembly and C source files
     // Only arm64 and x86 architectures have optimized assembly implementations.
     // All other architectures will use the generic fallback C implementation.
 
-    lib.addCSourceFiles(.{
+    lib.root_module.addCSourceFiles(.{
         .root = upstream.path("src"),
         .files = if (target.result.cpu.arch.isArm() or target.result.cpu.arch.isAARCH64())
             &[_][]const u8{
@@ -50,7 +50,7 @@ pub fn build(b: *std.Build) void {
         .flags = assembly_flags.items,
     });
 
-    lib.addCSourceFiles(.{
+    lib.root_module.addCSourceFiles(.{
         .root = upstream.path("src"),
         .files = &[_][]const u8{
             "hashtree.c",
@@ -62,7 +62,7 @@ pub fn build(b: *std.Build) void {
             "-Werror",
         },
     });
-    lib.addIncludePath(upstream.path("src"));
+    lib.root_module.addIncludePath(upstream.path("src"));
 
     lib.installHeader(upstream.path("src/hashtree.h"), "hashtree.h");
     b.installArtifact(lib);
