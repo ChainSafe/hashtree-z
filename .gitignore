@@ -1,5 +1,4 @@
 hashtree/
 zig-out/
-.zig-cache/zig-pkg/
 .zig-cache/
 zig-pkg/
