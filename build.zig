@@ -16,16 +16,11 @@ pub fn build(b: *std.Build) void {
         }),
     });
 
-    const assembly_flags_default = &.{ "-g", "-fpic" };
-    var assembly_flags = std.ArrayList([]const u8).init(b.allocator);
-    assembly_flags.appendSlice(assembly_flags_default) catch unreachable;
+    const assembly_flags: []const []const u8 = &.{ "-g", "-fpic" };
 
-    if (!target.result.cpu.arch.isAARCH64()) {
-        assembly_flags.append("-fno-integrated-as") catch unreachable;
-    }
-
-    // Add the assembly and C source files
-    lib.addCSourceFiles(.{
+    const os = target.result.os.tag;
+    const abi = target.result.abi;
+    lib.root_module.addCSourceFiles(.{
         .root = upstream.path("src"),
         .files = if (target.result.cpu.arch.isArm() or target.result.cpu.arch.isAARCH64())
             &[_][]const u8{
@@ -33,7 +28,12 @@ pub fn build(b: *std.Build) void {
                 "sha256_armv8_neon_x1.S",
                 "sha256_armv8_crypto.S",
             }
-        else
+            // The x86 .S files use ELF-only directives (.section .rodata, byte-count
+            // .align, .type %function) that LLVM MC can't translate to Mach-O or
+            // COFF-MSVC. Those targets fall through to the generic C implementation.
+        else if (target.result.cpu.arch.isX86() and
+            os != .macos and
+            !(os == .windows and abi == .msvc))
             &[_][]const u8{
                 "sha256_shani.S",
                 "sha256_avx_x16.S",
@@ -41,8 +41,10 @@ pub fn build(b: *std.Build) void {
                 "sha256_avx_x4.S",
                 "sha256_avx_x1.S",
                 "sha256_sse_x1.S",
-            },
-        .flags = assembly_flags.items,
+            }
+        else
+            &[_][]const u8{},
+        .flags = assembly_flags,
     });
 
     lib.addCSourceFiles(.{
