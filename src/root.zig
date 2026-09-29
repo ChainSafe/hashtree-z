@@ -21,9 +21,11 @@ fn isSupported() bool {
         return true;
     }
 
-    if (builtin.cpu.arch == .x86_64 and (std.Target.x86.featureSetHasAll(builtin.cpu.features, .{ .avx512f, .avx512vl }) or
-        std.Target.x86.featureSetHasAll(builtin.cpu.features, .{ .avx2, .bmi2 }) or
-        std.Target.x86.featureSetHasAll(builtin.cpu.features, .{ .sha, .avx })))
+    // hashtree_hash selects SHA-NI, AVX-512, AVX2, AVX, SSE or generic C at runtime, so this must not depend on the
+    // compile-time CPU. The x86 backends are assembled on the same targets as in build.zig.
+    if (builtin.cpu.arch == .x86_64 and
+        builtin.os.tag != .macos and
+        !(builtin.os.tag == .windows and builtin.abi == .msvc))
     {
         return true;
     }
