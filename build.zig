@@ -85,6 +85,12 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
     module.linkLibrary(lib);
+    const headers = b.addTranslateC(.{
+        .root_source_file = upstream.path("src/hashtree.h"),
+        .target = target,
+        .optimize = optimize,
+    });
+    module.addImport("hashtree_c", headers.createModule());
 
     const mod_unit_tests = b.addTest(.{
         .root_module = module,

@@ -1,9 +1,7 @@
 const std = @import("std");
 const builtin = @import("builtin");
 
-const c = @cImport({
-    @cInclude("hashtree.h");
-});
+const c = @import("hashtree_c");
 
 /// If hashtree is not supported, fallback to using the (cross-platform) std lib
 fn fallback(out: [][32]u8, in: []const [32]u8) void {
@@ -52,8 +50,8 @@ pub fn hash(out: [][32]u8, in: []const [32]u8) Error!void {
 }
 
 test {
-    const chunks: [2][32]u8 = [_][32]u8{[_]u8{0xAB} ** 32} ** 2;
-    var out: [1][32]u8 = [_][32]u8{[_]u8{0} ** 32};
+    const chunks: [2][32]u8 = @splat(@splat(0xAB));
+    var out: [1][32]u8 = @splat(@splat(0));
     try hash(&out, &chunks);
     const expected_hash: [32]u8 = [_]u8{
         0xec, 0x65, 0xc8, 0x79, 0x8e, 0xcf, 0x95, 0x90, 0x24, 0x13, 0xc4, 0x0f, 0x7b, 0x9e,
@@ -65,7 +63,7 @@ test {
 }
 
 test "overlapping memory" {
-    var chunks: [50][32]u8 = [_][32]u8{[_]u8{0xAB} ** 32} ** 50;
+    var chunks: [50][32]u8 = @splat(@splat(0xAB));
     var out: [25][32]u8 = undefined;
     try hash(&out, &chunks);
     try hash(chunks[0..25], &chunks);
