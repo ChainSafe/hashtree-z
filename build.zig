@@ -1,4 +1,5 @@
 const std = @import("std");
+const Translator = @import("translate_c").Translator;
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
@@ -85,12 +86,12 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
     module.linkLibrary(lib);
-    const headers = b.addTranslateC(.{
-        .root_source_file = upstream.path("src/hashtree.h"),
+    const headers: Translator = .init(b.dependency("translate_c", .{}), .{
+        .c_source_file = upstream.path("src/hashtree.h"),
         .target = target,
         .optimize = optimize,
     });
-    module.addImport("hashtree_c", headers.createModule());
+    module.addImport("hashtree_c", headers.mod);
 
     const mod_unit_tests = b.addTest(.{
         .root_module = module,
