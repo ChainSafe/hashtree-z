@@ -2,13 +2,17 @@
     .name = .hashtree,
     .version = "0.1.0",
     .dependencies = .{
+        .translate_c = .{
+            .url = "git+https://codeberg.org/ziglang/translate-c#cfac21f3199b2b02ce3fd7db652aa456421fe4ab",
+            .hash = "translate_c-2.0.2-Q_BUWvBNBwDnyehSiuAJmdFcMYHYGA-Jc3KiYdrV2Dqx",
+        },
         .hashtree = .{
             .url = "git+https://github.com/offchainlabs/hashtree#fba14494dada4420440d985c2c516341d9c24b9b",
             .hash = "N-V-__8AAJ03FACfm8Hlfs97yP3-2Hd5ZzSv9yYuoEi3Yi_B",
         },
     },
     .fingerprint = 0xf963e115bea813b0,
-    .minimum_zig_version = "0.16.0",
+    .minimum_zig_version = "0.17.1",
     .paths = .{
         "build.zig",
         "build.zig.zon",
